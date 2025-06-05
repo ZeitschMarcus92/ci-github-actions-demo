@@ -1,4 +1,4 @@
-name: Teil 1: CI mit GitHub Actions
+name: "Teil 1: CI mit GitHub Actions"
 
 on:
   push:
