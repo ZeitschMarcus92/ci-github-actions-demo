@@ -38,7 +38,7 @@ jobs:
         run: echo "value=Hallo aus Output!" >> $GITHUB_OUTPUT
 
       - name: Nutze Output
-        run: echo "Output war: ${{ steps.generate.outputs.value }}"
+        run: echo Output war:${{ steps.generate.outputs.value }}
 
   node-matrix:
     runs-on: ubuntu-latest
