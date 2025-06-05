@@ -1,10 +1,12 @@
 pipeline {
     agent any
 
+    // 1. Globale Umgebungsvariablen
     environment {
         ENV = 'production'
         VERSION = '1.0.0'
-        MY_SECRET = credentials('MY_SECRET_CREDENTIAL')
+        // Hinweis: Kein echtes Secret möglich – Dummy wird gesetzt
+        MY_SECRET = 'DUMMY_SECRET_12345'
     }
 
     stages {
@@ -15,6 +17,7 @@ pipeline {
             }
         }
 
+        // 2. Stage-spezifische Variable
         stage('Globale + lokale Variable – Teil 2') {
             environment {
                 STAGE_ONLY = 'nur in dieser Stage'
@@ -26,16 +29,18 @@ pipeline {
             }
         }
 
-        stage('Secrets verwenden – gefiltert') {
+        // 3. Secret (simuliert)
+        stage('Simuliertes Secret') {
             steps {
                 script {
                     def secret = env.MY_SECRET
-                    echo "Geheimes Passwort wurde geladen. Länge: ${secret.length()} Zeichen"
+                    echo "Simulierter Secret-Wert – Länge: ${secret.length()} Zeichen"
                 }
             }
         }
 
-        stage('BONUS: Übergabe an Shell-Skript') {
+        // 4. BONUS – Übergabe an Shell-Skript
+        stage('BONUS: Shell-Skript') {
             steps {
                 writeFile file: 'myscript.sh', text: '''
                     #!/bin/bash
@@ -51,7 +56,7 @@ pipeline {
 
     post {
         always {
-            echo "Pipeline fertig!"
+            echo "Pipeline erfolgreich abgeschlossen (Dummy-Version)"
         }
     }
 }
