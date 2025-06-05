@@ -1,0 +1,66 @@
+name: Teil 1: CI mit GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  ENV: production
+  VERSION: 1.0.0
+
+jobs:
+  global-vars:
+    runs-on: ubuntu-latest
+    env:
+      VERSION: 2.0.0  # überschreibt globale VERSION
+    steps:
+      - name: Zeige Umgebungsvariablen
+        run: |
+          echo "Globale ENV: $ENV"
+          echo "Lokale VERSION: $VERSION"
+
+  use-secret:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy-Verwendung des Secrets
+        run: |
+          echo "Ein geheimes Token wurde geladen – Länge: ${#MY_SECRET}"
+        env:
+          MY_SECRET: ${{ secrets.MY_SECRET }}
+
+  step-output:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generiere Output
+        id: generate
+        run: echo "value=Hallo aus Output!" >> $GITHUB_OUTPUT
+
+      - name: Nutze Output
+        run: echo "Output war: ${{ steps.generate.outputs.value }}"
+
+  node-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18]
+    name: Test mit Node.js ${{ matrix.node-version }}
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Zeige Node-Version
+        run: node -v
+
+  bonus-github-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Zeige Repository-Namen mit API
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repoName = context.repo.repo;
+            console.log(`Repo-Name: ${repoName}`);
